@@ -1,5 +1,5 @@
 // =====================================
-// Dashboard Mini dengan Grafik, Keuntungan, dan Total Balance
+// Script Inspect>console - 999dice.net (Dec 2024)
 // =====================================
 
 // Inisialisasi variabel keuntungan
