@@ -2,9 +2,9 @@
 // Script Inspect>console - 999dice.net (Dec 2024)
 // =====================================
 
-// Inisialisasi variabel keuntungan
-let totalProfit = 0; // Total keuntungan dalam coin
-let totalBet = 0; // Total coin yang di-bet
+// Initialize the profit variable
+let totalProfit = 0; // Total profit in coins
+let totalBet = 0; // Total coins bet
 
 // Elemen Dashboard
 const container = document.createElement("div");
@@ -45,7 +45,7 @@ container.innerHTML = `
 `;
 document.body.appendChild(container);
 
-// Fungsi untuk membuat elemen bisa digeser
+// Function to make elements slidable
 function makeDraggable(element) {
     let offsetX = 0, offsetY = 0, isDragging = false;
 
@@ -77,20 +77,20 @@ const ctx = canvas.getContext("2d");
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 
-let dataPoints = [50]; // Data awal
-let maxDataPoints = 50; // Maksimum jumlah titik
+let dataPoints = [50]; // Initial data
+let maxDataPoints = 50; // Maximum number of points
 
-// Fungsi untuk menggambar grafik area-chart
+// Function to draw area-chart graph
 function drawChart() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.beginPath();
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#28a745"; // Warna garis hijau
-    ctx.fillStyle = "rgba(40, 167, 69, 0.2)"; // Warna area hijau transparan
+    ctx.strokeStyle = "#28a745";// Green line color
+    ctx.fillStyle = "rgba(40, 167, 69, 0.2)"; // Transparent green area color
 
     for (let i = 0; i < dataPoints.length; i++) {
-        let x = (i / (dataPoints.length - 1)) * canvas.width; // Posisi X proporsional
+        let x = (i / (dataPoints.length - 1)) * canvas.width; // Proportional X position
         let y = canvas.height - (dataPoints[i] / 100) * canvas.height; // Skala 0-100
         if (i === 0) {
             ctx.moveTo(x, y);
@@ -106,29 +106,29 @@ function drawChart() {
     ctx.stroke();
 }
 
-// Fungsi untuk memperbarui data grafik
+// Function to update chart data
 function updateChart(betResult, amount) {
     let lastPoint = dataPoints[dataPoints.length - 1] || 50;
 
-    // Tentukan perubahan nilai berdasarkan hasil taruhan
+    // Determine the change in value based on the betting result
     let change = 0;
     if (betResult === "bad") {
-        change = -(Math.random() * amount + 1); // Fluktuasi turun
+        change = -(Math.random() * amount + 1); // Downward fluctuation
     } else if (betResult === "good") {
-        change = Math.random() * amount + 1; // Fluktuasi naik
+        change = Math.random() * amount + 1; // Fluctuation up
     }
 
-    let newPoint = Math.max(0, Math.min(100, lastPoint + change)); // Jaga nilai antara 0-100
+    let newPoint = Math.max(0, Math.min(100, lastPoint + change)); // Keep value between 0-100
     dataPoints.push(newPoint);
 
     if (dataPoints.length > maxDataPoints) {
-        dataPoints.shift(); // Hapus titik lama
+        dataPoints.shift(); // Delete old point
     }
 
     drawChart();
 }
 
-// Fungsi untuk memperbarui keuntungan di dashboard
+// Function to update profit on dashboard
 function updateProfitDisplay() {
     const balanceElement = document.getElementById("coin-value");
     const balance = balanceElement ? parseFloat(balanceElement.textContent.trim()) : 0;
@@ -136,7 +136,7 @@ function updateProfitDisplay() {
     document.getElementById("profitDisplay").textContent = `${totalProfit.toFixed(8)} [${profitPercentage}%]`;
 }
 
-// Fungsi untuk membaca dan memperbarui total balance secara real-time
+// Function to read and update total balance in real-time
 function updateTotalBalance() {
     const balanceElement = document.getElementById("coin-value");
     if (balanceElement) {
@@ -156,16 +156,16 @@ function observeBalanceChanges() {
     }
 
     const observer = new MutationObserver(() => {
-        // Perbarui dashboard saat elemen balance berubah
+        // Update dashboard when balance element changes
         updateTotalBalance();
         updateProfitDisplay();
     });
 
-    // Konfigurasi observer untuk memantau perubahan teks
+    // Configure observer to monitor text changes
     observer.observe(balanceElement, {
-        childList: true, // Pantau perubahan anak elemen
-        characterData: true, // Pantau perubahan karakter
-        subtree: true, // Pantau semua perubahan di dalam elemen
+        childList: true, // Monitor changes in child elements
+        characterData: true, // Monitor character changes
+        subtree: true, // Monitor all changes inside the element
     });
 
     // Perbarui balance pertama kali
@@ -176,35 +176,35 @@ function observeBalanceChanges() {
 // Panggil fungsi observer
 observeBalanceChanges();
 
-// Fungsi untuk memeriksa hasil taruhan
+// Function to check betting results
 function checkResult(resultText) {
-    const valueMatch = resultText.match(/-?\d+\.\d+/); // Menangkap angka hasil taruhan
+    const valueMatch = resultText.match(/-?\d+\.\d+/); // Capture the betting result numbers
     const value = valueMatch ? parseFloat(valueMatch[0]) : 0;
 
     if (resultText.includes("won") || resultText.includes("+")) {
         console.log(`%cwin ${value} DOGE (hijau)`, "color: green; font-weight: bold;");
-        const profit = value; // Profit = hasil menang
-        totalProfit += profit; // Tambahkan ke total keuntungan
-        totalBet += value / 2; // Misal bet marti-marti, hitung sebagai separuhnya
-        updateProfitDisplay(); // Perbarui dashboard
+        const profit = value; // Profit = winning result
+        totalProfit += profit; // Add to total profit
+        totalBet += value / 2; // For example, bet marti-marti, count it as half
+        updateProfitDisplay(); // Update dashboard
         updateChart("good", profit); // Grafik naik
         return "good";
     } else if (resultText.includes("lose") || resultText.includes("-")) {
         console.log(`%close ${value} DOGE (merah)`, "color: red; font-weight: bold;");
-        totalBet += Math.abs(value); // Tambahkan ke total bet
-        updateProfitDisplay(); // Perbarui dashboard
-        updateChart("bad", Math.abs(value)); // Grafik turun
+        totalBet += Math.abs(value); // Add to total bet
+        updateProfitDisplay(); // Update dashboard
+        updateChart("bad", Math.abs(value)); // Graph down
         return "bad";
     }
     return null;
 }
 
-// Fungsi utama bot
+// The main function of the bot
 async function startBot() {
     const actions = ["BetLowButton", "BetHighButton"];
     let currentActionIndex = 0; // Mulai dengan tombol Low
 
-    // Inisialisasi MutationObserver untuk hasil taruhan
+    // Initialize MutationObserver for betting results
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.type === "childList" || mutation.type === "characterData") {
@@ -214,8 +214,8 @@ async function startBot() {
                     const result = checkResult(resultText);
 
                     if (result === "good") {
-                        clickButton("BetResetButton"); // Klik tombol Reset
-                        currentActionIndex = (currentActionIndex + 1) % actions.length; // Pindah ke aksi berikutnya
+                        clickButton("BetResetButton"); // Click the Reset button
+                        currentActionIndex = (currentActionIndex + 1) % actions.length; // Move to the next action
                     } else if (result === "bad") {
                         clickButton("MultiplyBetButtonCr"); // Klik tombol Double
                     }
@@ -235,16 +235,16 @@ async function startBot() {
         console.warn("Elemen LastBetInfoContainer tidak ditemukan untuk observer.");
     }
 
-    // Jalankan klik tombol dengan waktu lebih cepat
+   // Execute button click with faster time
     while (true) {
         const action = actions[currentActionIndex];
-        clickButton(action); // Klik tombol Low atau High
+        clickButton(action); // Click the Low or High button
 
         await new Promise((resolve) => setTimeout(resolve, 1)); // Delay hanya 1ms
     }
 }
 
-// Fungsi untuk memberikan efek klik
+// Function to give click effect
 function simulateClickEffect(button) {
     if (!button) return;
 
