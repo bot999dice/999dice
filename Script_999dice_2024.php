@@ -59,8 +59,8 @@ function makeDraggable(element) {
 
     document.addEventListener("mousemove", (e) => {
         if (isDragging) {
-            element.style.left = ${e.clientX - offsetX}px;
-            element.style.top = ${e.clientY - offsetY}px;
+            element.style.left = `${e.clientX - offsetX}px`;
+            element.style.top = `${e.clientY - offsetY}px`;
         }
     });
 
@@ -135,7 +135,7 @@ function updateProfitDisplay() {
     console.log(totalProfit);
     console.log(balance);
     const profitPercentage = balance > 0 ? ((totalProfit / balance) * 100).toFixed(2) : 0;
-    document.getElementById("profitDisplay").textContent = ${parseFloat(totalProfit).toFixed(8)} [${profitPercentage}%];
+    document.getElementById("profitDisplay").textContent = `${parseFloat(totalProfit).toFixed(8)} [${profitPercentage}%]`;
 }
 
 // Function to read and update total balance in real-time
@@ -143,7 +143,7 @@ function updateTotalBalance() {
     const balanceElement = document.getElementById("coin-value");
     if (balanceElement) {
         const balance = balanceElement.textContent.trim(); // Baca nilai balance dari elemen
-        document.getElementById("totalBalanceDisplay").textContent = Total Balance: ${balance};
+        document.getElementById("totalBalanceDisplay").textContent = `Total Balance: ${balance}`;
     } else {
         console.warn("Elemen balance tidak ditemukan.");
     }
@@ -184,7 +184,7 @@ function checkResult(resultText) {
     const value = valueMatch ? parseFloat(valueMatch[0]) : 0;
     console.log(value);
     if (resultText.includes("won") || resultText.includes("+")) {
-        console.log(%cwin ${value} DOGE (hijau), "color: green; font-weight: bold;");
+        console.log(`%cwin ${value} DOGE (hijau)`, "color: green; font-weight: bold;");
         const profit = value; // Profit = winning result
         totalProfit += profit; // Add to total profit
         totalBet += value / 2; // For example, bet marti-marti, count it as half
@@ -192,7 +192,7 @@ function checkResult(resultText) {
         updateChart("good", profit); // Grafik naik
         return "good";
     } else if (resultText.includes("lose") || resultText.includes("-")) {
-        console.log(%close ${value} DOGE (merah), "color: red; font-weight: bold;");
+        console.log(`%close ${value} DOGE (merah)`, "color: red; font-weight: bold;");
         totalBet += Math.abs(value); // Add to total bet
         updateProfitDisplay(); // Update dashboard
         updateChart("bad", Math.abs(value)); // Graph down
@@ -267,7 +267,7 @@ function clickButton(buttonId) {
         simulateClickEffect(button);
         button.click();
     } else {
-        console.warn(Tombol "${buttonId}" tidak ditemukan.);
+        console.warn(`Tombol "${buttonId}" tidak ditemukan.`);
     }
 }
 
